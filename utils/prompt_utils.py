@@ -6,7 +6,6 @@ from utils.local_utils import get_local_files
 def load_prompts():
     """
     Loads predefined prompt types from the prompts.json file.
-
     Returns:
         dict: A dictionary of prompt types.
     """
@@ -17,10 +16,8 @@ def load_prompts():
 def format_files(files):
     """
     Formats the list of files into a markdown-friendly string.
-
     Args:
         files (list): List of file dictionaries with 'path' and 'content'.
-
     Returns:
         str: Formatted string of files.
     """
@@ -32,10 +29,8 @@ def format_files(files):
 def get_language_from_extension(file_path):
     """
     Infers the programming language from the file extension.
-
     Args:
         file_path (str): Path to the file.
-
     Returns:
         str: Programming language or empty string.
     """
@@ -63,7 +58,6 @@ def get_language_from_extension(file_path):
 def generate_prompt(prompt_type, task_definition, repo=None, local_folder=None, language='', include_files=False, preamble_edit=''):
     """
     Generates a detailed prompt based on user input and selected prompt type.
-
     Args:
         prompt_type (str): Selected prompt type.
         task_definition (str): Description of the task.
@@ -72,7 +66,6 @@ def generate_prompt(prompt_type, task_definition, repo=None, local_folder=None, 
         language (str): Programming language.
         include_files (bool): Whether to include file sections.
         preamble_edit (str): Custom preamble.
-
     Returns:
         str: Generated prompt.
     """
@@ -93,14 +86,24 @@ def generate_prompt(prompt_type, task_definition, repo=None, local_folder=None, 
         if local_folder:
             local_files = get_local_files(local_folder)
             files.extend(local_files)
-    files_section = format_files(files) if include_files else ''
+    files_section = format_files(files) if include_files and files else ''
+
+    # If include_files is False, remove the 'Provided Files' section from the template
+    if not include_files or not files_section:
+        # Remove the '## Provided Files' section from the template
+        template_str = template_str.replace('## Provided Files\n{FILES}', '')
+        template_str = template_str.replace('## Provided Files\r\n{FILES}', '')  # Handle Windows line endings
+        template_str = template_str.replace('## Provided Files\n\n{FILES}', '')
+        template_str = template_str.replace('## Provided Files\r\n\r\n{FILES}', '')
+    else:
+        # Replace {FILES} placeholder with files_section
+        template_str = template_str.replace('{FILES}', files_section)
 
     # Render the template
     template = Template(template_str)
     prompt = template.render(
         TASK_DEFINITION=task_definition,
-        LANGUAGE=language,
-        FILES=files_section
+        LANGUAGE=language
     )
 
     # Combine preamble and prompt

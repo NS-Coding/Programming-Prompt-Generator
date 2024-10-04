@@ -36,7 +36,7 @@ The **Prompt Generator Web Application** allows users to generate detailed progr
     - [3. Install Dependencies](#3-install-dependencies)
     - [4. Set Up GitHub Authentication](#4-set-up-github-authentication)
       - [Steps to Create a Personal Access Token (PAT):](#steps-to-create-a-personal-access-token-pat)
-      - [Set the Token Using a `.env` File:](#set-the-token-using-a-env-file)
+      - [Set the Token and Key Using a `.env` File:](#set-the-token-and-key-using-a-env-file)
     - [5. Running the Flask Web Application](#5-running-the-flask-web-application)
     - [6. Using the Command-Line Interface (CLI)](#6-using-the-command-line-interface-cli)
   - [Usage Documentation](#usage-documentation)
@@ -372,7 +372,7 @@ This project is licensed under the **MIT License**.
 
 ## Contact
 
-For any inquiries or support, please open an issue on the GitHub repository or contact the maintainer at [ThePhiRatio](ThePhiRatio:https://github.com/ThePhiRatio).
+For any inquiries or support, please open an issue on the GitHub repository or contact the maintainer at [ThePhiRatio](https://github.com/ThePhiRatio).
 
 ---
 

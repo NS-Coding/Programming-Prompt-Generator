@@ -26,7 +26,34 @@ function updatePreamble() {
     }
 }
 
-// Initialize the preamble when the page loads
+// Autocomplete for Programming Language
+const languageInput = document.getElementById('language');
+const suggestions = document.getElementById('language-suggestions');
+
+languageInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    suggestions.innerHTML = '';
+    if (query.length > 0) {
+        const matches = languages.filter(lang => lang.toLowerCase().includes(query));
+        matches.forEach(match => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.textContent = match;
+            listItem.addEventListener('click', function() {
+                languageInput.value = match;
+                suggestions.innerHTML = '';
+            });
+            suggestions.appendChild(listItem);
+        });
+    }
+});
+
+document.addEventListener('click', function(event) {
+    if (!languageInput.contains(event.target)) {
+        suggestions.innerHTML = '';
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     updatePreamble();
 });

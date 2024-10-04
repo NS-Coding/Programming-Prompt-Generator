@@ -1,6 +1,4 @@
 import argparse
-from utils.github_utils import get_repo_files
-from utils.local_utils import get_local_files
 from utils.prompt_utils import generate_prompt
 
 def main():

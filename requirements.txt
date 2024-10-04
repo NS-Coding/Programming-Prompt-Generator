@@ -1,0 +1,5 @@
+python-dotenv==1.0.1
+flask==3.0.3
+PyGithub==2.4.0
+pathspec==0.12.1
+flask_limiter==3.8.0

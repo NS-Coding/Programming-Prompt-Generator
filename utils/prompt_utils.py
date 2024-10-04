@@ -1,39 +1,26 @@
 import json
-from jinja2 import Template
+import logging
 from utils.github_utils import get_repo_files
 from utils.local_utils import get_local_files
 
+logger = logging.getLogger(__name__)
+
 def load_prompts():
-    """
-    Loads predefined prompt types from the prompts.json file.
-    Returns:
-        dict: A dictionary of prompt types.
-    """
     with open('prompts.json', 'r', encoding='utf-8') as f:
         prompts = json.load(f)
     return prompts
 
 def format_files(files):
-    """
-    Formats the list of files into a markdown-friendly string.
-    Args:
-        files (list): List of file dictionaries with 'path' and 'content'.
-    Returns:
-        str: Formatted string of files.
-    """
-    formatted = ""
+    formatted_list = []
     for file in files:
-        formatted += f"### {file['path']}\n\n```{get_language_from_extension(file['path'])}\n{file['content']}\n```\n\n"
-    return formatted
+        # Limit content length per file
+        content = file['content']
+        if len(content) > 10000:  # Limit to 10,000 characters per file
+            content = content[:10000] + "\n... [Content Truncated]"
+        formatted_list.append(f"### {file['path']}\n\n```{get_language_from_extension(file['path'])}\n{content}\n```\n")
+    return '\n'.join(formatted_list)
 
 def get_language_from_extension(file_path):
-    """
-    Infers the programming language from the file extension.
-    Args:
-        file_path (str): Path to the file.
-    Returns:
-        str: Programming language or empty string.
-    """
     extension = file_path.split('.')[-1].lower()
     extensions = {
         'py': 'python',
@@ -51,61 +38,82 @@ def get_language_from_extension(file_path):
         'xml': 'xml',
         'sh': 'bash',
         'md': 'markdown',
+        'swift': 'swift',
+        'kt': 'kotlin',
+        'rs': 'rust',
+        'ts': 'typescript',
+        'pl': 'perl',
+        'm': 'objective-c',
+        'hs': 'haskell',
+        'lua': 'lua',
+        'dart': 'dart',
+        'ex': 'elixir',
+        'clj': 'clojure',
+        'erl': 'erlang',
+        'vb': 'vbnet',
+        'fs': 'fsharp',
+        'r': 'r',
+        'matlab': 'matlab',
+        'groovy': 'groovy',
+        'sh': 'shell',
+        'ps1': 'powershell',
+        'sql': 'sql',
         # Add more as needed
     }
     return extensions.get(extension, '')
 
-def generate_prompt(prompt_type, task_definition, repo=None, local_folder=None, language='', include_files=False, preamble_edit=''):
-    """
-    Generates a detailed prompt based on user input and selected prompt type.
-    Args:
-        prompt_type (str): Selected prompt type.
-        task_definition (str): Description of the task.
-        repo (str, optional): GitHub repository name.
-        local_folder (str, optional): Path to local folder.
-        language (str): Programming language.
-        include_files (bool): Whether to include file sections.
-        preamble_edit (str): Custom preamble.
-    Returns:
-        str: Generated prompt.
-    """
+def generate_prompt(prompt_type, task_definition, include_task, language, include_language, include_files, preamble_edit, repo=None, repo_path="", local_folder=None):
     prompts = load_prompts()
+    logger.debug(f"Generating prompt for type: {prompt_type}")
 
     if prompt_type not in prompts:
         raise ValueError(f"Prompt type '{prompt_type}' is not defined.")
 
     prompt_info = prompts[prompt_type]
-    preamble = preamble_edit if preamble_edit.strip() != '' else prompt_info['preamble']
+    preamble = preamble_edit.strip() if preamble_edit.strip() != '' else prompt_info['preamble']
     template_str = prompt_info['template']
 
-    files = []
+    # Modify preamble based on include options
+    if not include_task:
+        preamble = preamble.replace('The specifics for this task are located under the "Task Definition" section, ', '')
+    if not include_language:
+        preamble = preamble.replace('the programming language used is specified under the "Programming Language" section, ', '')
+        preamble = preamble.replace('the programming language to be used is specified under the "Programming Language" section, ', '')
+    if not include_files:
+        preamble = preamble.replace('and the relevant code files are provided under the "Provided Files" section', '')
+        preamble = preamble.replace('and any relevant files are provided under the "Provided Files" section', '')
+
+    files_section = ''
     if include_files:
+        files = []
         if repo:
-            repo_files = get_repo_files(repo)
+            logger.debug(f"Fetching files from repository: {repo} at path {repo_path}")
+            repo_files = get_repo_files(repo_full_name=repo, repo_path=repo_path)
             files.extend(repo_files)
         if local_folder:
+            logger.debug(f"Fetching files from local folder: {local_folder}")
             local_files = get_local_files(local_folder)
             files.extend(local_files)
-    files_section = format_files(files) if include_files and files else ''
+        files_section = format_files(files) if files else ''
+        if not files_section:
+            # Remove files section if no files were retrieved
+            include_files = False
 
-    # If include_files is False, remove the 'Provided Files' section from the template
-    if not include_files or not files_section:
-        # Remove the '## Provided Files' section from the template
-        template_str = template_str.replace('## Provided Files\n{FILES}', '')
-        template_str = template_str.replace('## Provided Files\r\n{FILES}', '')  # Handle Windows line endings
-        template_str = template_str.replace('## Provided Files\n\n{FILES}', '')
-        template_str = template_str.replace('## Provided Files\r\n\r\n{FILES}', '')
+    # Replace placeholders manually
+    prompt = template_str
+    if include_task:
+        prompt = prompt.replace('[[TASK_DEFINITION]]', task_definition)
     else:
-        # Replace {FILES} placeholder with files_section
-        template_str = template_str.replace('{FILES}', files_section)
+        prompt = prompt.replace('## Task Definition\n[[TASK_DEFINITION]]', '')
+    if include_language:
+        prompt = prompt.replace('[[LANGUAGE]]', language)
+    else:
+        prompt = prompt.replace('## Programming Language\n[[LANGUAGE]]', '')
+    if include_files and files_section:
+        prompt = prompt.replace('[[FILES]]', files_section)
+    else:
+        prompt = prompt.replace('## Provided Files\n[[FILES]]', '')
 
-    # Render the template
-    template = Template(template_str)
-    prompt = template.render(
-        TASK_DEFINITION=task_definition,
-        LANGUAGE=language
-    )
-
-    # Combine preamble and prompt
     full_prompt = f"{preamble}\n\n{prompt}"
+    logger.debug("Prompt generation complete.")
     return full_prompt

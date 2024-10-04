@@ -100,3 +100,6 @@ venv.bak/
 # Logs
 logs/
 *.log
+
+#Output Files
+prompt_output.txt

@@ -109,6 +109,9 @@ venv.bak/
 logs/
 *.log
 
+#Prompt Output
+prompt_output.txt
+
 # Hidden files and directories
 .*
     '''

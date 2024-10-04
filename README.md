@@ -71,7 +71,7 @@ cd prompt-generator/backend
 Create a virtual environment to manage dependencies.
 
 ```bash
-python3 -m venv venv
+python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 

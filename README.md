@@ -116,7 +116,7 @@ To access GitHub repositories without hitting rate limits, you need to set up Gi
    - Click **Generate token** at the bottom of the page.
    - **Copy the generated token** and store it securely. You won't be able to see it again.
 
-#### Set the Token Using a `.env` File:
+#### Set the Token and Key Using a `.env` File:
 
 To securely provide your GitHub token to the application, use a `.env` file in combination with the `python-dotenv` package.
 
@@ -134,23 +134,15 @@ To securely provide your GitHub token to the application, use a `.env` file in c
 
    **Important:** Replace `your_personal_access_token` with the token you copied from GitHub.
 
-3. **Ensure `.env` is in `.gitignore`:**
+3. **Add Your Flask Secret Key to the `.env` File:**
 
-   The `.env` file should **not** be committed to version control. The `.gitignore` file already includes `.env`, but double-check to confirm.
-
-   ```gitignore
-   # .gitignore
-
-   .env
+   ```plaintext
+   SECRET_KEY=your_secret_key
    ```
 
-4. **Install `python-dotenv`:**
+   **Important:** Replace `your_secret_key` with a generated secret key.
 
-   ```bash
-   pip install python-dotenv
-   ```
-
-5. **Verify the Setup:**
+4. **Verify the Setup:**
 
    Your project structure should look like this:
 
@@ -188,7 +180,7 @@ You can also generate prompts using the CLI script `generate_prompt.py`.
 python generate_prompt.py \
   --prompt_type "Code Implementation" \
   --task "Implement a feature to export data as CSV" \
-  --repo "octocat/Hello-World/src" \
+  --repo "octocat/Hello-World" \
   --language "Python" \
   --include_task \
   --include_language \

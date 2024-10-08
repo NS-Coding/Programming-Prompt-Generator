@@ -55,14 +55,13 @@ def get_language_from_extension(file_path):
         'r': 'r',
         'matlab': 'matlab',
         'groovy': 'groovy',
-        'sh': 'shell',
         'ps1': 'powershell',
         'sql': 'sql',
         # Add more as needed
     }
     return extensions.get(extension, '')
 
-def generate_prompt(prompt_type, task_definition, include_task, language, include_language, include_files, preamble_edit, repo=None, repo_path="", local_folder=None):
+def generate_prompt(prompt_type, task_definition, include_task, language, include_language, include_files, preamble_edit, repo=None, repo_path="", local_folder=None, ignore_list=None):
     prompts = load_prompts()
     logger.debug(f"Generating prompt for type: {prompt_type}")
 
@@ -92,7 +91,7 @@ def generate_prompt(prompt_type, task_definition, include_task, language, includ
             files.extend(repo_files)
         if local_folder:
             logger.debug(f"Fetching files from local folder: {local_folder}")
-            local_files = get_local_files(local_folder)
+            local_files = get_local_files(local_folder, ignore_list=ignore_list)
             files.extend(local_files)
         files_section = format_files(files) if files else ''
         if not files_section:

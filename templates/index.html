@@ -64,6 +64,10 @@
                 <textarea class="form-control" id="preamble_edit" name="preamble_edit" rows="4"></textarea>
             </div>
             <div class="mb-3">
+                <label for="ignore_list" class="form-label">Files/Folders to Ignore (comma-separated)</label>
+                <input type="text" class="form-control" id="ignore_list" name="ignore_list" placeholder="e.g., node_modules, tests, README.md">
+            </div>
+            <div class="mb-3">
                 <label for="language" class="form-label">Programming Language</label>
                 <input type="text" class="form-control" id="language" name="language" placeholder="e.g., Python" autocomplete="off">
                 <ul id="language-suggestions" class="list-group"></ul>

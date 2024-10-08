@@ -5,9 +5,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from utils.prompt_utils import generate_prompt, load_prompts
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 
-load_dotenv() 
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
@@ -43,6 +43,8 @@ def index():
         include_language = 'include_language' in request.form
         include_files = 'include_files' in request.form
         preamble_edit = request.form.get('preamble_edit', '')
+        ignore_list = request.form.get('ignore_list', '')
+        ignore_list = [pattern.strip() for pattern in ignore_list.split(',') if pattern.strip()]
 
         logger.debug("Received form data.")
 
@@ -94,7 +96,8 @@ def index():
                 preamble_edit=preamble_edit,
                 repo=repo,
                 repo_path=repo_path,
-                local_folder=local_folder
+                local_folder=local_folder,
+                ignore_list=ignore_list
             )
             return render_template('prompt.html', prompt=prompt)
         except Exception as e:

@@ -183,7 +183,7 @@ def get_local_files(folder_path, ignore_list=None):
                 continue
             file_path = os.path.join(root, filename)
             # Exclude very large files
-            if os.path.getsize(file_path) > 500000:  # 500 KB limit
+            if os.path.getsize(file_path) > 50000000:  # 50 MB limit
                 logger.debug(f"Skipping large file: {relative_path}")
                 continue
             try:

@@ -1,16 +1,59 @@
 function copyToClipboard() {
     var copyText = document.getElementById("promptTextarea");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); // For mobile devices
 
-    navigator.clipboard.writeText(copyText.value)
-        .then(() => {
+    // Create a temporary textarea element
+    var textarea = document.createElement("textarea");
+    textarea.value = copyText.value;
+    // Prevent scrolling to the bottom of the page
+    textarea.style.position = "fixed";
+    textarea.style.top = 0;
+    textarea.style.left = 0;
+    textarea.style.width = "2em";
+    textarea.style.height = "2em";
+    textarea.style.padding = 0;
+    textarea.style.border = "none";
+    textarea.style.outline = "none";
+    textarea.style.boxShadow = "none";
+    textarea.style.background = "transparent";
+
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+        var successful = document.execCommand('copy');
+        if (successful) {
             alert("Prompt copied to clipboard!");
-        })
-        .catch(err => {
+        } else {
             alert("Failed to copy prompt.");
-        });
+        }
+    } catch (err) {
+        alert("Failed to copy prompt.");
+        console.error('Copy to clipboard failed:', err);
+    }
+
+    document.body.removeChild(textarea);
 }
+
+function downloadPrompt() {
+    var promptText = document.getElementById("promptTextarea").value;
+    var blob = new Blob([promptText], { type: "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "prompt.txt";
+    document.body.appendChild(a);
+    a.click();
+
+    // Clean up
+    setTimeout(function() {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);  
+    }, 0);
+}
+
+
 
 // Function to update the preamble when the prompt type changes
 function updatePreamble() {

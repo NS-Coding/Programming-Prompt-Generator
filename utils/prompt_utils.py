@@ -13,12 +13,15 @@ def load_prompts():
 def format_files(files):
     formatted_list = []
     for file in files:
-        # Limit content length per file
         content = file['content']
-        if len(content) > 10000:  # Limit to 10,000 characters per file
-            content = content[:10000] + "\n... [Content Truncated]"
-        formatted_list.append(f"### {file['path']}\n\n```{get_language_from_extension(file['path'])}\n{content}\n```\n")
+        formatted_list.append(
+            f"### {file['path']}\n\n"
+            f"```{get_language_from_extension(file['path'])}\n"
+            f"{content}\n"
+            f"```\n"
+        )
     return '\n'.join(formatted_list)
+
 
 def get_language_from_extension(file_path):
     extension = file_path.split('.')[-1].lower()

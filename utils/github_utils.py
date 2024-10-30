@@ -45,7 +45,7 @@ def get_repo_files(repo_full_name, repo_path=""):
                 logger.debug(f"Skipping non-whitelisted file: {file_content.path}")
                 continue
             # Limit file size
-            if file_content.size > 5000000:  # 5000 KB limit
+            if file_content.size > 5000000:  # 5 MB limit
                 logger.debug(f"Skipping large file: {file_content.path}")
                 continue
             try:

@@ -17,6 +17,7 @@
             <textarea class="form-control" id="promptTextarea" rows="15" readonly>{{ prompt }}</textarea>
         </div>
         <button class="btn btn-success" onclick="copyToClipboard()">Copy to Clipboard</button>
+        <button class="btn btn-primary" onclick="downloadPrompt()">Download Prompt</button>
         <a href="{{ url_for('index') }}" class="btn btn-secondary">Generate Another Prompt</a>
     </div>
 

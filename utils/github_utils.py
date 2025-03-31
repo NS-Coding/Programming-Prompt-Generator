@@ -1,7 +1,6 @@
 import os
 from github import Github
 import logging
-from utils.common import load_whitelist, is_whitelisted_file
 
 logger = logging.getLogger(__name__)
 
@@ -27,24 +26,16 @@ def get_repo_files(repo_full_name, repo_path=""):
         raise ValueError(f"Unable to access repository '{repo_full_name}'. Ensure it is public and the name is correct.") from e
 
     contents = repo.get_contents(repo_path)
-    whitelist = load_whitelist()
     files = []
 
     while contents:
         file_content = contents.pop(0)
         if file_content.type == "dir":
-            if file_content.name.startswith('.'):
-                logger.debug(f"Skipping hidden directory: {file_content.path}")
-                continue
+            # Removed default blacklist functionality; include all directories.
             contents.extend(repo.get_contents(file_content.path))
         elif file_content.type == "file":
-            if file_content.name.startswith('.'):
-                logger.debug(f"Skipping hidden file: {file_content.path}")
-                continue
-            if not is_whitelisted_file(file_content.name, whitelist):
-                logger.debug(f"Skipping non-whitelisted file: {file_content.path}")
-                continue
-            # Limit file size
+            # Removed default filtering of hidden and non-whitelisted files.
+            # Limit file size remains.
             if file_content.size > 5000000:  # 5 MB limit
                 logger.debug(f"Skipping large file: {file_content.path}")
                 continue

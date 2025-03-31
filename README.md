@@ -47,9 +47,6 @@ The **Prompt Generator Web Application** allows users to generate detailed progr
       - [Usage:](#usage)
       - [Options:](#options)
       - [Example:](#example)
-    - [Configuring the Whitelist of File Extensions](#configuring-the-whitelist-of-file-extensions)
-      - [Editing the Whitelist](#editing-the-whitelist)
-      - [Location](#location)
   - [Contributing](#contributing)
   - [License](#license)
   - [Acknowledgements](#acknowledgements)
@@ -280,34 +277,6 @@ python generate_prompt.py \
   --edit_preamble "Please focus on security best practices."
 ```
 
-### Configuring the Whitelist of File Extensions
-
-The application uses a whitelist of file extensions and filenames to determine which files to include when fetching files from local directories or GitHub repositories. This whitelist is defined in the `whitelist_extensions.txt` file located in the root directory.
-
-#### Editing the Whitelist
-
-- **Add File Extensions or Filenames:**
-
-  To add a new file extension or filename to the whitelist, simply add a new line in `whitelist_extensions.txt` with the extension (e.g., `.py`) or filename (e.g., `Makefile`).
-
-- **Comments:**
-
-  Lines starting with `#` are treated as comments and ignored when loading the whitelist.
-
-- **Example:**
-
-  ```
-  # Custom scripts
-  .myscript
-  custom_config.conf
-  ```
-
-#### Location
-
-Ensure that `whitelist_extensions.txt` is located in the correct directory relative to the modules that load it. By default, it should be in the root directory of the project or in the same directory as `app.py`.
-
----
-
 ## Contributing
 
 Contributions are welcome! To contribute:
@@ -372,7 +341,7 @@ This project is licensed under the **MIT License**.
 
 ## Contact
 
-For any inquiries or support, please open an issue on the GitHub repository or contact the maintainer at [ThePhiRatio](https://github.com/ThePhiRatio).
+For any inquiries or support, please open an issue on the GitHub repository or contact the maintainer.
 
 ---
 
